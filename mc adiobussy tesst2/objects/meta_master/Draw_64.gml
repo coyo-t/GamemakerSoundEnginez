@@ -1,33 +1,63 @@
+var mx = display_mouse_get_x() - window_get_x()
+var my = display_mouse_get_y() - window_get_y()
 
-//draw_set_colour(c_yellow)
-//draw_text(32, 32, array_reduce(entity_uuids, function(p,c,i){return p+"\n"+c}, ""))
-//draw_set_colour(c_white)
 
-draw_set_colour(c_green)
+begin
+	var sz = 4
+	var dx = mx+16*sz
+	var dy = my+16*sz
+	matrix_set(matrix_world, [sz,0,0,0, 0,sz,0,0, 0,0,1,0, dx,dy,0,1])
+	var tnfo = tileset_get_info(ts_terrain)
+	var tuvs = tileset_get_uvs(ts_terrain)
 
-draw_set_font(font_0)
-draw_text(32, 32, string_ext(
-	"X: {0}\nY: {1}\nYaw: {2}",
-	[
-		string(player.get_draw_x(tfac)), string(player.get_draw_y(tfac)), string(player.yaw)
-	]
-))
+	var u0 = player_cur_tile & 15
+	var v0 = player_cur_tile >> 4
+	u0 = (tnfo.tile_horizontal_separator << 1) * u0 + (u0 << 4) + tnfo.tile_horizontal_separator
+	v0 = (tnfo.tile_vertical_separator   << 1) * v0 + (v0 << 4) + tnfo.tile_vertical_separator
+	
+	var u1 = u0 + 16
+	var v1 = v0 + 16
 
-//var playing = audio.playing
-//var olen = array_length(playing)
-//var outs = "Not Playing... -v-\""
-//if olen > 1
-//{
-//	outs = string(playing[olen-1])
-//	if olen > 2
-//	{
-//		for (var i = olen-2; i >= 0; i--)
-//		{
-//			var e = playing[i]
-//			outs = string_ext("{0}\n{1}", [string(e), outs])
-//		}
-//	}
-//}
-//draw_text(32, 32, outs)
+	u0 = lerp(tuvs[0], tuvs[2], u0/tnfo.width)
+	v0 = lerp(tuvs[1], tuvs[3], v0/tnfo.height)
+	u1 = lerp(tuvs[0], tuvs[2], u1/tnfo.width)
+	v1 = lerp(tuvs[1], tuvs[3], v1/tnfo.height)
 
-draw_set_colour(c_white)
+	/*
+	       TC
+	     _.o._
+	LU o<_   _>o  RU
+	   |  'o'--|- MC
+	LD o._ | _.o  RD
+	      'o'
+	       BC
+	*/
+	begin
+		draw_primitive_begin_texture(pr_trianglelist, tnfo.texture)
+			var c = c_white
+			draw_vertex_texture_colour(  0,   0, u0, v1, c, 1.0) // mc
+			draw_vertex_texture_colour(  0, -16, u1, v0, c, 1.0) // tc
+			draw_vertex_texture_colour(-14,  -8, u0, v0, c, 1.0) // lu
+			draw_vertex_texture_colour(  0, -16, u1, v0, c, 1.0) // tc
+			draw_vertex_texture_colour(  0,   0, u0, v1, c, 1.0) // mc
+			draw_vertex_texture_colour( 14,  -8, u1, v1, c, 1.0) // rc
+			
+			c = c_grey
+			draw_vertex_texture_colour(  0, 16, u1, v1, c, 1.0) // bc
+			draw_vertex_texture_colour(-14,  8, u0, v1, c, 1.0) // ld
+			draw_vertex_texture_colour(-14, -8, u0, v0, c, 1.0) // lu
+			draw_vertex_texture_colour(-14, -8, u0, v0, c, 1.0) // ld
+			draw_vertex_texture_colour(  0, 16, u1, v1, c, 1.0) // bc
+			draw_vertex_texture_colour(  0,  0, u1, v0, c, 1.0) // mc
+			
+			c = c_ltgrey
+			draw_vertex_texture_colour(0,   0, u0, v0, c, 1.0) // mc
+			draw_vertex_texture_colour(0,  16, u0, v1, c, 1.0) // bc
+			draw_vertex_texture_colour(14,  8, u1, v1, c, 1.0) // rd
+			draw_vertex_texture_colour(0,   0, u0, v0, c, 1.0) // mc
+			draw_vertex_texture_colour(14,  8, u1, v1, c, 1.0) // rd
+			draw_vertex_texture_colour(14, -8, u1, v0, c, 1.0) // ru
+		draw_primitive_end()
+	end
+	matrix_set(matrix_world, matrix_build_identity())
+end

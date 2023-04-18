@@ -1,26 +1,26 @@
 {
   "resourceType": "GMSprite",
   "resourceVersion": "1.0",
-  "name": "spr_grid",
-  "bbox_bottom": 15,
+  "name": "spr_terrain",
+  "bbox_bottom": 255,
   "bbox_left": 0,
-  "bbox_right": 15,
+  "bbox_right": 255,
   "bbox_top": 0,
   "bboxMode": 0,
   "collisionKind": 1,
   "collisionTolerance": 0,
   "DynamicTexturePage": false,
   "edgeFiltering": false,
-  "For3D": true,
+  "For3D": false,
   "frames": [
-    {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"0eba71e1-6348-4d15-8206-acd6ae422a8c",},
+    {"resourceType":"GMSpriteFrame","resourceVersion":"1.1","name":"6b2cfdbb-288f-400b-b4ea-c7d4a631f41c",},
   ],
   "gridX": 0,
   "gridY": 0,
-  "height": 16,
+  "height": 256,
   "HTile": false,
   "layers": [
-    {"resourceType":"GMImageLayer","resourceVersion":"1.0","name":"d61a3628-6508-4a3b-8519-2adb052f38a1","blendMode":0,"displayName":"default","isLocked":false,"opacity":100.0,"visible":true,},
+    {"resourceType":"GMImageLayer","resourceVersion":"1.0","name":"8ebf168f-6ce5-4363-9903-b007a8142466","blendMode":0,"displayName":"default","isLocked":false,"opacity":100.0,"visible":true,},
   ],
   "nineSlice": null,
   "origin": 0,
@@ -32,7 +32,7 @@
   "sequence": {
     "resourceType": "GMSequence",
     "resourceVersion": "1.4",
-    "name": "spr_grid",
+    "name": "spr_terrain",
     "autoRecord": true,
     "backdropHeight": 768,
     "backdropImageOpacity": 0.5,
@@ -54,7 +54,7 @@
     "timeUnits": 1,
     "tracks": [
       {"resourceType":"GMSpriteFramesTrack","resourceVersion":"1.0","name":"frames","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"1.0","Keyframes":[
-            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"0eba71e1-6348-4d15-8206-acd6ae422a8c","path":"sprites/spr_grid/spr_grid.yy",},},},"Disabled":false,"id":"8b3677c2-81f6-40a3-9cb3-5e02ff9c48ed","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
+            {"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"1.0","Channels":{"0":{"resourceType":"SpriteFrameKeyframe","resourceVersion":"1.0","Id":{"name":"6b2cfdbb-288f-400b-b4ea-c7d4a631f41c","path":"sprites/spr_terrain/spr_terrain.yy",},},},"Disabled":false,"id":"a86161d2-e4d1-455e-8669-218513bb1252","IsCreationKey":false,"Key":0.0,"Length":1.0,"Stretch":false,},
           ],},"modifiers":[],"spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange": null,
@@ -70,5 +70,5 @@
   },
   "type": 0,
   "VTile": false,
-  "width": 16,
+  "width": 256,
 }

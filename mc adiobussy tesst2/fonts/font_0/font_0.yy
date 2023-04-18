@@ -118,8 +118,8 @@
   "last": 0,
   "maintainGms1Font": false,
   "parent": {
-    "name": "mc adiobussy tesst2",
-    "path": "mc adiobussy tesst2.yyp",
+    "name": "fonts",
+    "path": "folders/fonts.yy",
   },
   "pointRounding": 0,
   "ranges": [

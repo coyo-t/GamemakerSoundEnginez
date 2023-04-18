@@ -34,12 +34,14 @@ playing = [] // <ISoundDataSampler>
 audio_mix = pakt_from_buffer(f, buffer_s16)
 
 DBG_glass       = new SampleData(load_pmc("glass2.sfx"), 44100)
+DBG_stone       = new SampleData(load_pmc("stone4.sfx"), 44100)
 DBG_holyshit    = new SampleData(load_pmc("holyshit.sfx"), 44100)
 DBG_armashatter = new SampleData(load_pmc("splitofmind2_stereo.sfx"), 44100, 2)
 
 soundmap = {
 	"glass":    { pcm: DBG_glass,    pitch: 0.8, volume: 1.0 },
 	"holyshit": { pcm: DBG_holyshit, pitch: 1.0, volume: 1.0 },
+	"stone":    { pcm: DBG_stone,    pitch: 0.8, volume: 1.0 },
 }
 
 function queue_sound (_sfx, _listener)

@@ -179,7 +179,7 @@ function ASoundEmitter (_listener) : ISoundSource() constructor begin
 	static get_pan_at = function (x, z)
 	{
 		var xx = x - listener.x
-		var zz = z - listener.z
+		var zz = z - listener.y
 		var mag = xx * xx + zz * zz
 
 		if (mag == 0)
@@ -193,7 +193,9 @@ function ASoundEmitter (_listener) : ISoundSource() constructor begin
 		mag /= 2
 		
 		var yr = -listener.yaw + 180
-		return (dsin(yr) * zz - dcos(yr) * xx) * (mag > 1 ? 1 : mag);
+		//var yr = listener.yaw
+		var fff = (dsin(yr) * -zz - dcos(yr) * xx) * (mag > 1 ? 1 : mag)
+		return fff
 	}
 	
 	///@func get_volume_at(x, y, z)
@@ -218,7 +220,8 @@ function EntityEmitter (_sound_source,
 	///@returns {real}
 	static get_pan = function ()
 	{
-		return get_pan_at(sound_source.x, sound_source.z)
+		return get_pan_at(sound_source.x, sound_source.y)
+		//return get_pan_at(sound_source.x, sound_source.z)
 	}
 	
 	///@func get_volume()
@@ -242,7 +245,8 @@ function PointEmitter (_source_x,
 	///@returns {real}
 	static get_pan = function ()
 	{
-		return get_pan_at(x, z)
+		//return get_pan_at(x, z)
+		return get_pan_at(x, y)
 	}
 	
 	///@func get_volume()

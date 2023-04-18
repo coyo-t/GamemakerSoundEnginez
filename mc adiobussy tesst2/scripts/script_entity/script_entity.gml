@@ -93,6 +93,9 @@ constructor begin
 	{
 		update_previous()
 		
+		var sinyaw = dsin(yaw)
+		var cosyaw = dcos(yaw)
+		
 		var finp = f_input
 		var sinp = s_input
 		var mmag = finp*finp + sinp*sinp
@@ -102,8 +105,11 @@ constructor begin
 			finp *= mmag
 			sinp *= mmag
 		}
-		vspeed += finp * 0.1
-		hspeed += sinp * 0.1
+		finp *= 0.1
+		sinp *= 0.1
+		
+		hspeed += sinp * cosyaw + finp * sinyaw
+		vspeed += finp * cosyaw - sinp * sinyaw
 		
 		x += hspeed
 		y += vspeed
@@ -123,24 +129,6 @@ constructor begin
 			draw_vertex_colour(dx+sz, dy-sz, c_yellow, 1)
 			draw_vertex_colour(dx-sz, dy+sz, c_yellow, 1)
 			draw_vertex_colour(dx+sz, dy+sz, c_yellow, 1)
-		draw_primitive_end()
-		var ss = dsin(yaw)
-		var sc = dcos(yaw)
-		var ax = dx+ss*2
-		var ay = dy+sc*2
-		draw_set_colour(c_red)
-		draw_primitive_begin(pr_linelist)
-			draw_vertex(dx, dy)
-			draw_vertex(ax, ay)
-			draw_vertex(dx, dy)
-			draw_vertex(dx-sc, dy+ss)
-			draw_vertex(dx, dy)
-			draw_vertex(dx+sc, dy-ss)
-		draw_primitive_end()
-		draw_primitive_begin(pr_trianglelist)
-			draw_vertex(dx+ss*2, dy+sc*2)
-			draw_vertex((dx+ss*1.8)-sc*.1, (dy+sc*1.8)+ss*.1)
-			draw_vertex((dx+ss*1.8)+sc*.1, (dy+sc*1.8)-ss*.1)
 		draw_primitive_end()
 		
 		draw_set_colour(c_white)
@@ -199,7 +187,7 @@ end
 function ShitParticleEntity (_x=0,_y=0,_z=0) : Entity(_x,_y,_z)
 constructor begin
 	age = 0
-	lifetime = 4 / (random_range(0.1, 0.2))
+	lifetime = 4 / (random_range(0.1, 0.3))
 	part_size = random_range(4, 8) / 32.0
 	yaw_speed = random_range(0, 45)
 	oyaw = yaw
@@ -232,7 +220,12 @@ constructor begin
 		var dy = get_draw_y(_t)
 		var dyaw = lerp(oyaw, yaw, _t)
 		var m = matrix_get(matrix_world)
-		matrix_set(matrix_world, matrix_build(dx, dy, 0, 0, 0, dyaw, part_size, part_size, 1))
+		var sz = part_size * clamp(1-power(1-(((lifetime-age)-_t)/lifetime), lifetime), 0, 1)
+		matrix_stack_push(matrix_build(dx, dy, z, 0, 0, dyaw, 1, 1, 1))
+		matrix_stack_push(matrix_build(0, 0, 0, 0, 0, 0, sz, sz, 1))
+		matrix_set(matrix_world, matrix_stack_top())
+		matrix_stack_pop()
+		matrix_stack_pop()
 		
 		draw_primitive_begin(pr_linestrip)
 			draw_vertex(-1,-1)
@@ -246,3 +239,65 @@ constructor begin
 	}
 	
 end
+
+function ShitTerrainParticleEntity (_x, _y, _z, _type) : ShitParticleEntity(_x,_y,_z)
+constructor begin
+	static tnfo = tileset_get_info(ts_terrain)
+	static tuvs = tileset_get_uvs(ts_terrain)
+	
+	tiletype = _type
+	
+	s0 = irandom_range(0, 15)
+	t0 = irandom_range(0, 15)
+	s1 = irandom_range(s0+1, 16)
+	t1 = irandom_range(t0+1, 16)
+
+	u0 = _type & 15
+	v0 = _type >> 4
+	u0 = (tnfo.tile_horizontal_separator << 1) * u0 + (u0 << 4) + tnfo.tile_horizontal_separator
+	v0 = (tnfo.tile_vertical_separator   << 1) * v0 + (v0 << 4) + tnfo.tile_vertical_separator
+	
+	u1 = u0 + s1
+	v1 = v0 + t1
+	u0 += s0
+	v0 += t0
+	u0 = lerp(tuvs[0], tuvs[2], u0/tnfo.width)
+	v0 = lerp(tuvs[1], tuvs[3], v0/tnfo.height)
+	u1 = lerp(tuvs[0], tuvs[2], u1/tnfo.width)
+	v1 = lerp(tuvs[1], tuvs[3], v1/tnfo.height)
+	
+	///@func draw(tfac)
+	static draw = function (_t)
+	{
+		var dx = get_draw_x(_t)
+		var dy = get_draw_y(_t)
+		var dyaw = lerp(oyaw, yaw, _t)
+		var m = matrix_get(matrix_world)
+		var sz = clamp(1-power(1-(((lifetime-age)-_t)/lifetime), lifetime), 0, 1)
+		
+		var sx = ((s1-s0) / 16.0) * sz
+		var sy = ((t1-t0) / 16.0) * sz
+		
+		matrix_stack_push(matrix_build(dx, dy, z, 0, 0, dyaw, 1, 1, 1))
+		matrix_stack_push(matrix_build(-sx*0.5, -sy*0.5, 0, 0, 0, 0, 1, 1, 1))
+		matrix_set(matrix_world, matrix_stack_top())
+		matrix_stack_pop()
+		matrix_stack_pop()
+		
+		draw_primitive_begin_texture(pr_trianglestrip, tnfo.texture)
+			draw_vertex_texture(0, 0, u0,v0)
+			draw_vertex_texture(sx,0, u1,v0)
+			draw_vertex_texture(0, sy,u0,v1)
+			draw_vertex_texture(sx,sy,u1,v1)
+		draw_primitive_end()
+		draw_primitive_begin(pr_linestrip)
+			draw_vertex_colour(0, 0, c_black,1)
+			draw_vertex_colour(sx,0, c_black,1)
+			draw_vertex_colour(sx,sy,c_black,1)
+			draw_vertex_colour(0, sy,c_black,1)
+			draw_vertex_colour(0, 0, c_black,1)
+		draw_primitive_end()
+		matrix_set(matrix_world, m)
+	}
+end
+

@@ -11,8 +11,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "mc adiobussy tesst2",
-    "path": "mc adiobussy tesst2.yyp",
+    "name": "__jnk",
+    "path": "folders/objects/__jnk.yy",
   },
   "parentObjectId": null,
   "persistent": false,

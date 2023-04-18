@@ -12,8 +12,8 @@
   "conversionMode": 0,
   "duration": 1.312517,
   "parent": {
-    "name": "mc adiobussy tesst2",
-    "path": "mc adiobussy tesst2.yyp",
+    "name": "audio",
+    "path": "folders/audio.yy",
   },
   "preload": false,
   "sampleRate": 44100,
